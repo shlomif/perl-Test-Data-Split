@@ -16,7 +16,7 @@ Test::Data::Split - split data-driven tests into several test scripts.
 
     use Test::Data::Split;
 
-    # Implements Test::Data::Split::Hash
+    # Implements Test::Data::Split::Backend::Hash
     use MyTest;
 
     my $tests_dir = "./t";

@@ -3,6 +3,8 @@
 use strict;
 use warnings;
 
+use lib './t/lib';
+
 package DataObj;
 
 use List::MoreUtils qw/notall/;
@@ -61,7 +63,7 @@ sub lookup_data
 
 package main;
 
-use Test::More tests => 4;
+use Test::More tests => 8;
 
 use Test::Data::Split;
 
@@ -174,6 +176,99 @@ MyTest->run_id(qq#e100_99#);
 
 EOF
         'Test for file e100_99',
+    );
+}
+
+{
+    use DataSplitHashTest;
+
+    my $dir = tempdir( CLEANUP => 1);
+
+    my $tests_dir = "$dir/t";
+
+    my $data_obj = DataSplitHashTest->new;
+
+    # TEST
+    eq_or_diff(
+        $data_obj->list_ids(),
+        [ qw(a b c d e100_99) ],
+        "Test::Data::Split::Backend::Hash list_ids",
+    );
+
+    my $obj = Test::Data::Split->new(
+        {
+            target_dir => "$tests_dir",
+            filename_cb => sub {
+                my ($self, $args) = @_;
+
+                my $id = $args->{id};
+
+                return "valgrind-$id.t";
+            },
+            contents_cb => sub {
+                my ($self, $args) = @_;
+
+                my $id = $args->{id};
+
+                return <<"EOF";
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Test::More tests => 1;
+use DataSplitHashTest;
+
+@{['# TEST']}
+DataSplitHashTest->new->run_id(qq#$id#);
+
+EOF
+            },
+            data_obj => $data_obj,
+        }
+    );
+
+    # TEST
+    ok ($obj, "Test::Data::Split::Backend::Hash Object was initted.");
+
+    $obj->run;
+
+    # TEST
+    eq_or_diff(
+        [ io->file("$tests_dir/valgrind-a.t")->all ],
+        [ <<"EOF" ],
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Test::More tests => 1;
+use DataSplitHashTest;
+
+@{['# TEST']}
+DataSplitHashTest->new->run_id(qq#a#);
+
+EOF
+        'Test::Data::Split::Backend::Hash Test for file a',
+    );
+
+    # TEST
+    eq_or_diff(
+        [ io->file("$tests_dir/valgrind-e100_99.t")->all ],
+        [ <<"EOF" ],
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Test::More tests => 1;
+use DataSplitHashTest;
+
+@{['# TEST']}
+DataSplitHashTest->new->run_id(qq#e100_99#);
+
+EOF
+        'Test::Data::Split::Backend::Hash Test for file e100_99',
     );
 }
 
