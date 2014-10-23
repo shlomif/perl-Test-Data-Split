@@ -10,7 +10,59 @@ use IO::All qw/ io /;
 
 =head1 NAME
 
-Test::Data::Split - split data-driven test into several test scripts.
+Test::Data::Split - split data-driven tests into several test scripts.
+
+=head1 SYNOPSIS
+
+    use Test::Data::Split;
+
+    # Implements Test::Data::Split::Hash
+    use MyTest;
+
+    my $tests_dir = "./t";
+
+    my $obj = Test::Data::Split->new(
+        {
+            target_dir => $tests_dir,
+            filename_cb => sub {
+                my ($self, $args) = @_;
+
+                my $id = $args->{id};
+
+                return "valgrind-$id.t";
+            },
+            contents_cb => sub {
+                my ($self, $args) = @_;
+
+                my $id = $args->{id};
+
+                return <<"EOF";
+    #!/usr/bin/perl
+
+    use strict;
+    use warnings;
+
+    use Test::More tests => 1;
+    use MyTest;
+
+    @{['# TEST']}
+    MyTest->run_id(qq#$id#);
+
+    EOF
+            },
+            data_obj => MyTest->new,
+        }
+    );
+
+    $obj->run;
+
+    # And later in the shell:
+    prove t/*.t
+
+=head1 DESCRIPTION
+
+This module splits a set of data with IDs and arbitrary values into one
+test file per (key+value) for easy parallelisation.
 
 =cut
 
@@ -22,6 +74,35 @@ has ['_contents_cb'] => (is => 'ro', isa => 'CodeRef', required => 1, init_arg =
 has '_data_obj' => (is => 'ro', required => 1, init_arg => 'data_obj');
 
 =head1 METHODS
+
+=head2 my $obj = Test::Data::Split->new({ %PARAMS })
+
+Accepts the following parameters:
+
+=over 4
+
+=item * target_dir
+
+The path to the target directory - a string.
+
+=item * filename_cb
+
+A subroutine references that accepts C<< ($self, {id => $id }) >>
+and returns the filename.
+
+=item * contents_cb
+
+A subroutine references that accepts C<< ($self, {id => $id }) >>
+and returns the contents inside the file.
+
+=item * data_obj
+
+An object reference that implements the C<< ->list_ids() >> methods
+that returns an array reference of IDs to generate as files.
+
+=back
+
+An example for using it can be found in the synopsis.
 
 =head2 $self->run()
 
