@@ -47,7 +47,9 @@ sub _init
 
 sub list_ids
 {
-    return [ sort { $a cmp $b } keys(%{shift->_hash}) ];
+    my ($self) = @_;
+
+    return [ sort { $a cmp $b } keys(%{$self->_hash}) ];
 }
 
 sub lookup_data
@@ -59,14 +61,16 @@ sub lookup_data
 
 package main;
 
-use Test::More tests => 1;
+use Test::More tests => 3;
 
 use Test::Data::Split;
 
 use File::Temp qw/tempdir/;
 
+use IO::All qw/ io /;
 
-1;
+use Test::Differences (qw( eq_or_diff ));
+
 {
 
     my $dir = tempdir( CLEANUP => 1);
@@ -84,19 +88,27 @@ use File::Temp qw/tempdir/;
 
     my $data_obj = DataObj->new(
         {
-            hash_ref => \%hash,
+            hash => (\%hash),
         }
     );
 
+    # TEST
+    eq_or_diff(
+        $data_obj->list_ids(),
+        [ qw(a b c d e100_99) ],
+        "list_ids",
+    );
+
+
     my $obj = Test::Data::Split->new(
         {
-            target_dir => "$dir/t",
+            target_dir => "$tests_dir",
             filename_cb => sub {
                 my ($self, $args) = @_;
 
                 my $id = $args->{id};
 
-                return "valgrind-$id";
+                return "valgrind-$id.t";
             },
             contents_cb => sub {
                 my ($self, $args) = @_;
@@ -112,7 +124,7 @@ use warnings;
 use Test::More tests => 1;
 use MyTest;
 
-# TEST
+@{['# TEST']}
 MyTest->run_id(qq#$id#);
 
 EOF
@@ -123,5 +135,26 @@ EOF
 
     # TEST
     ok ($obj, "Object was initted.");
+
+    $obj->run;
+
+    # TEST
+    eq_or_diff(
+        [ io->file("$tests_dir/valgrind-a.t")->all ],
+        [ <<"EOF" ],
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Test::More tests => 1;
+use MyTest;
+
+@{['# TEST']}
+MyTest->run_id(qq#a#);
+
+EOF
+        'test for file a',
+    );
 }
 
