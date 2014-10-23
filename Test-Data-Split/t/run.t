@@ -61,7 +61,7 @@ sub lookup_data
 
 package main;
 
-use Test::More tests => 3;
+use Test::More tests => 4;
 
 use Test::Data::Split;
 
@@ -154,7 +154,26 @@ use MyTest;
 MyTest->run_id(qq#a#);
 
 EOF
-        'test for file a',
+        'Test for file a',
+    );
+
+    # TEST
+    eq_or_diff(
+        [ io->file("$tests_dir/valgrind-e100_99.t")->all ],
+        [ <<"EOF" ],
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Test::More tests => 1;
+use MyTest;
+
+@{['# TEST']}
+MyTest->run_id(qq#e100_99#);
+
+EOF
+        'Test for file e100_99',
     );
 }
 
