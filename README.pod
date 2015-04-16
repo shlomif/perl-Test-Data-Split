@@ -1,0 +1,17 @@
+=encoding utf8
+
+=head1 Test-Data-Split
+
+Splits data-driven tests into individual test scripts.
+
+Licence is MIT/X11.
+
+For more information, see:
+
+=over 4
+
+=item * L<https://metacpan.org/release/Test-Data-Split>
+
+=back
+
+=cut
