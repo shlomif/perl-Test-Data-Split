@@ -1,4 +1,8 @@
 Revision history for Test-Data-Split
 
+v0.0.2  2015-04-28
+    - Specify minimum version of perl
+        - CPANTS / Kwalitee
+
 v0.0.1  2014-10-23
     - First version, released on an unsuspecting world
