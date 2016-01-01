@@ -1,5 +1,10 @@
 Revision history for Test-Data-Split
 
+v0.0.3  2016-01-01
+    - Move a costly sanity check of notall from the constructor into
+    list_ids().
+        - This way lookup_data may run faster.
+
 v0.0.2  2015-04-28
     - Specify minimum version of perl
         - CPANTS / Kwalitee

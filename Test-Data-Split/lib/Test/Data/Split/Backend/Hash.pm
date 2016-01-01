@@ -3,7 +3,6 @@ package Test::Data::Split::Backend::Hash;
 use strict;
 use warnings;
 
-use List::MoreUtils qw/notall/;
 
 =head1 NAME
 
@@ -86,13 +85,7 @@ sub _init
 {
     my ($self, $args) = @_;
 
-    my $hash_ref = $self->get_hash;
-
-    if (notall { /\A[A-Za-z_\-0-9]{1,80}\z/ } keys (%$hash_ref))
-    {
-        die "Invalid key in hash reference. All keys must be alphanumeric plus underscores and dashes.";
-    }
-    $self->_hash($hash_ref);
+    $self->_hash(scalar ( $self->get_hash() ));
 
     return;
 }
@@ -101,7 +94,15 @@ sub list_ids
 {
     my ($self) = @_;
 
-    return [ sort { $a cmp $b } keys(%{$self->_hash}) ];
+    my @keys = keys(%{$self->_hash});
+
+    require List::MoreUtils;
+
+    if (List::MoreUtils::notall { /\A[A-Za-z_\-0-9]{1,80}\z/ } @keys)
+    {
+        die "Invalid key in hash reference. All keys must be alphanumeric plus underscores and dashes.";
+    }
+    return [ sort { $a cmp $b } @keys ];
 }
 
 sub lookup_data
