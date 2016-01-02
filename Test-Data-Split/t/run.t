@@ -7,7 +7,10 @@ use lib './t/lib';
 
 package DataObj;
 
-use List::MoreUtils qw/notall/;
+# We cannot load List::MoreUtils here because it compiles prototypes which
+# causes tests to erroneously pass.
+#
+# use List::MoreUtils qw/notall/;
 
 sub new
 {
@@ -38,10 +41,14 @@ sub _init
 
     my $hash_ref = $args->{hash};
 
-    if (notall { /\A[A-Za-z_\-0-9]{1,80}\z/ } keys (%$hash_ref))
+    foreach my $k (keys (%$hash_ref))
     {
-        die "Invalid key in hash reference. All keys must be alphanumeric plus underscores and dashes.";
+        if ($k !~ /\A[A-Za-z_\-0-9]{1,80}\z/)
+        {
+            die "Invalid key in hash reference. All keys must be alphanumeric plus underscores and dashes.";
+        }
     }
+
     $self->_hash($hash_ref);
 
     return;

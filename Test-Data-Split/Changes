@@ -1,5 +1,13 @@
 Revision history for Test-Data-Split
 
+v0.0.4  2016-01-02
+    - Fix an erroneous List::MoreUtils::notall call in the hash backend.
+        - It was introduced in the latest release.
+        - It was not caught by the test, but was caught by a failed run
+        of fc-solve’s Travis-CI build (and later the local build).
+            - Thanks to Travis-CI!
+        - Tests were fixed to catch it in the future.
+
 v0.0.3  2016-01-01
     - Move a costly sanity check of notall from the constructor into
     list_ids().

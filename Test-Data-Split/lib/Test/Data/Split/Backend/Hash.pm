@@ -98,7 +98,7 @@ sub list_ids
 
     require List::MoreUtils;
 
-    if (List::MoreUtils::notall { /\A[A-Za-z_\-0-9]{1,80}\z/ } @keys)
+    if (List::MoreUtils::notall( sub { /\A[A-Za-z_\-0-9]{1,80}\z/ }, @keys))
     {
         die "Invalid key in hash reference. All keys must be alphanumeric plus underscores and dashes.";
     }
