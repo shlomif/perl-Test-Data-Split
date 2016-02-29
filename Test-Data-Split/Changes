@@ -1,5 +1,9 @@
 Revision history for Test-Data-Split
 
+v0.2.0  Unknown
+    - Now passing the data to contents_cb so it can be serialised into the
+    file.
+
 v0.0.4  2016-01-02
     - Fix an erroneous List::MoreUtils::notall call in the hash backend.
         - It was introduced in the latest release.

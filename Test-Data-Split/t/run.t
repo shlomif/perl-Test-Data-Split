@@ -70,7 +70,7 @@ sub lookup_data
 
 package main;
 
-use Test::More tests => 8;
+use Test::More tests => 12;
 
 use Test::Data::Split;
 
@@ -276,6 +276,111 @@ DataSplitHashTest->new->run_id(qq#e100_99#);
 
 EOF
         'Test::Data::Split::Backend::Hash Test for file e100_99',
+    );
+}
+
+{
+    my %hash =
+    (
+        a => { more => "Hello"},
+        b => { more => "Jack"},
+        c => { more => "Sophie"},
+        d => { more => "Danny"},
+        'e100_99' => { more => "Zebra"},
+    );
+
+    my $data_obj = DataObj->new(
+        {
+            hash => (\%hash),
+        }
+    );
+
+    my $dir = tempdir( CLEANUP => 1);
+
+    my $tests_dir = "$dir/t";
+
+    # TEST
+    eq_or_diff(
+        $data_obj->list_ids(),
+        [ qw(a b c d e100_99) ],
+        "Test::Data::Split::Backend::Hash list_ids",
+    );
+
+    my $obj = Test::Data::Split->new(
+        {
+            target_dir => "$tests_dir",
+            filename_cb => sub {
+                my ($self, $args) = @_;
+
+                my $id = $args->{id};
+
+                return "id_with_data-$id.t";
+            },
+            contents_cb => sub {
+                my ($self, $args) = @_;
+
+                my $id = $args->{id};
+                my $data = $args->{data};
+
+                return <<"EOF";
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Test::More tests => 1;
+use My::TestData;
+
+@{['# TEST']}
+My::TestData->new->run(qq#$id#, qq#$data->{more}#);
+
+EOF
+            },
+            data_obj => $data_obj,
+        }
+    );
+
+    # TEST
+    ok ($obj, "Test::Data::Split::Backend::Hash Object was initted.");
+
+    $obj->run;
+
+    # TEST
+    eq_or_diff(
+        [ io->file("$tests_dir/id_with_data-a.t")->all ],
+        [ <<"EOF" ],
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Test::More tests => 1;
+use My::TestData;
+
+@{['# TEST']}
+My::TestData->new->run(qq#a#, qq#Hello#);
+
+EOF
+        'Test that the data gets passed',
+    );
+
+    # TEST
+    eq_or_diff(
+        [ io->file("$tests_dir/id_with_data-e100_99.t")->all ],
+        [ <<"EOF" ],
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Test::More tests => 1;
+use My::TestData;
+
+@{['# TEST']}
+My::TestData->new->run(qq#e100_99#, qq#Zebra#);
+
+EOF
+        'Pass the Data Test for file e100_99',
     );
 }
 

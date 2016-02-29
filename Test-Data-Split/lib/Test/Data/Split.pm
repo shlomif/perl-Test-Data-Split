@@ -94,8 +94,9 @@ and returns the filename.
 
 =item * contents_cb
 
-A subroutine references that accepts C<< ($self, {id => $id }) >>
-and returns the contents inside the file.
+A subroutine references that accepts
+C<< ($self, {id => $id, data => $data }) >> and returns the contents inside
+the file.
 
 =item * data_obj
 
@@ -120,7 +121,9 @@ sub run
     my $filename_cb = $self->_filename_cb;
     my $contents_cb = $self->_contents_cb;
 
-    foreach my $id (@{ $self->_data_obj->list_ids() })
+    my $data_obj = $self->_data_obj;
+
+    foreach my $id (@{ $data_obj->list_ids() })
     {
         # Croak on bad IDs.
         if ($id !~ /\A[A-Za-z_\-0-9]{1,80}\z/)
@@ -130,7 +133,7 @@ sub run
 
         io->catfile($target_dir, $filename_cb->($self, { id => $id, }, ))
           ->assert->print(
-              $contents_cb->($self, { id => $id, },)
+              $contents_cb->($self, { id => $id, data => $data_obj->lookup_data($id) },)
           );
     }
 
