@@ -1,6 +1,6 @@
 Revision history for Test-Data-Split
 
-v0.2.0  Unknown
+v0.2.0  2016-04-22
     - Now passing the data to contents_cb so it can be serialised into the
     file.
     - Add Test::Data::Split::Backend::ValidateHash .
