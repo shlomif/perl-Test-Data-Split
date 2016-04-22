@@ -131,7 +131,7 @@ use strict;
 use warnings;
 
 use Test::More tests => 1;
-use MyTest;
+@{['use']} MyTest;
 
 @{['# TEST']}
 MyTest->run_id(qq#$id#);
@@ -157,7 +157,7 @@ use strict;
 use warnings;
 
 use Test::More tests => 1;
-use MyTest;
+@{['use']} MyTest;
 
 @{['# TEST']}
 MyTest->run_id(qq#a#);
@@ -176,7 +176,7 @@ use strict;
 use warnings;
 
 use Test::More tests => 1;
-use MyTest;
+@{['use']} MyTest;
 
 @{['# TEST']}
 MyTest->run_id(qq#e100_99#);
@@ -329,7 +329,7 @@ use strict;
 use warnings;
 
 use Test::More tests => 1;
-use My::TestData;
+@{['use']} My::TestData;
 
 @{['# TEST']}
 My::TestData->new->run(qq#$id#, qq#$data->{more}#);
@@ -355,7 +355,7 @@ use strict;
 use warnings;
 
 use Test::More tests => 1;
-use My::TestData;
+@{['use']} My::TestData;
 
 @{['# TEST']}
 My::TestData->new->run(qq#a#, qq#Hello#);
@@ -374,7 +374,7 @@ use strict;
 use warnings;
 
 use Test::More tests => 1;
-use My::TestData;
+@{['use']} My::TestData;
 
 @{['# TEST']}
 My::TestData->new->run(qq#e100_99#, qq#Zebra#);
