@@ -6,7 +6,7 @@ use autodie;
 
 use 5.008;
 
-our $VERSION = '0.2.0';
+our $VERSION = 'v0.2.0';
 
 use IO::All qw/ io /;
 
