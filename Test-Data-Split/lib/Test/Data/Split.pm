@@ -6,8 +6,6 @@ use autodie;
 
 use 5.008;
 
-our $VERSION = 'v0.2.0';
-
 use IO::All qw/ io /;
 
 =head1 NAME
