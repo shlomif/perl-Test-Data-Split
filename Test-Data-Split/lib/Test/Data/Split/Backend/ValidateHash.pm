@@ -9,25 +9,26 @@ use parent 'Test::Data::Split::Backend::Hash';
 
 sub populate
 {
-    my ($self, $array_ref) = @_;
+    my ( $self, $array_ref ) = @_;
 
     my @l = @$array_ref;
 
     my $tests = $self->get_hash;
 
-    if (@l & 0x1)
+    if ( @l & 0x1 )
     {
         confess("Input length is not even.");
     }
     while (@l)
     {
-        my $key = shift@l;
-        my $val = shift@l;
-        if (exists($tests->{$key}))
+        my $key = shift @l;
+        my $val = shift @l;
+        if ( exists( $tests->{$key} ) )
         {
             confess("Duplicate key '$key'!");
         }
-        $tests->{$key} = $self->validate_and_transform({id => $key, data => $val,});
+        $tests->{$key} =
+            $self->validate_and_transform( { id => $key, data => $val, } );
     }
 
     return;

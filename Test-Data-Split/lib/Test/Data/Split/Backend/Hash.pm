@@ -3,7 +3,6 @@ package Test::Data::Split::Backend::Hash;
 use strict;
 use warnings;
 
-
 =head1 NAME
 
 Test::Data::Split::Backend::Hash - hash backend.
@@ -83,9 +82,9 @@ sub _hash
 
 sub _init
 {
-    my ($self, $args) = @_;
+    my ( $self, $args ) = @_;
 
-    $self->_hash(scalar ( $self->get_hash() ));
+    $self->_hash( scalar( $self->get_hash() ) );
 
     return;
 }
@@ -94,20 +93,21 @@ sub list_ids
 {
     my ($self) = @_;
 
-    my @keys = keys(%{$self->_hash});
+    my @keys = keys( %{ $self->_hash } );
 
     require List::MoreUtils;
 
-    if (List::MoreUtils::notall( sub { /\A[A-Za-z_\-0-9]{1,80}\z/ }, @keys))
+    if ( List::MoreUtils::notall( sub { /\A[A-Za-z_\-0-9]{1,80}\z/ }, @keys ) )
     {
-        die "Invalid key in hash reference. All keys must be alphanumeric plus underscores and dashes.";
+        die
+"Invalid key in hash reference. All keys must be alphanumeric plus underscores and dashes.";
     }
     return [ sort { $a cmp $b } @keys ];
 }
 
 sub lookup_data
 {
-    my ($self, $id) = @_;
+    my ( $self, $id ) = @_;
 
     return $self->_hash->{$id};
 }
