@@ -4,7 +4,7 @@
 
 Splits data-driven tests into individual test scripts.
 
-Licence is MIT/X11.
+Licence is MIT ( Expat ).
 
 For more information, see:
 
