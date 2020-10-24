@@ -7,13 +7,7 @@ use lib './t/lib';
 
 use Test::More tests => 1;
 
-use Test::Data::Split;
-
-use File::Temp qw/tempdir/;
-
-use IO::All qw/ io /;
-
-use Test::Differences (qw( eq_or_diff ));
+use Test::Data::Split ();
 
 {
     eval { require DataSplitValidateHashTest2; };

@@ -7,12 +7,8 @@ use lib './t/lib';
 
 use Test::More tests => 4;
 
-use Test::Data::Split;
-
-use File::Temp qw/tempdir/;
-
-use IO::All qw/ io /;
-
+use Test::Data::Split ();
+use Path::Tiny qw/ path tempdir tempfile cwd /;
 use Test::Differences (qw( eq_or_diff ));
 
 {
@@ -70,7 +66,7 @@ EOF
 
     # TEST
     eq_or_diff(
-        [ io->file("$tests_dir/valgrind-test_abc.t")->all ],
+        [ path("$tests_dir/valgrind-test_abc.t")->slurp_raw() ],
         [ <<"EOF" ],
 #!/usr/bin/perl
 
@@ -89,7 +85,7 @@ EOF
 
     # TEST
     eq_or_diff(
-        [ io->file("$tests_dir/valgrind-test_foo.t")->all ],
+        [ path("$tests_dir/valgrind-test_foo.t")->slurp_raw() ],
         [ <<"EOF" ],
 #!/usr/bin/perl
 

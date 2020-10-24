@@ -6,7 +6,7 @@ use autodie;
 
 use 5.008;
 
-use IO::All qw/ io /;
+use Path::Tiny qw/ path /;
 
 =head1 NAME
 
@@ -118,11 +118,13 @@ sub run
 {
     my $self = shift;
 
-    my $target_dir  = $self->_target_dir;
+    my $target_dir  = path( $self->_target_dir );
     my $filename_cb = $self->_filename_cb;
     my $contents_cb = $self->_contents_cb;
 
     my $data_obj = $self->_data_obj;
+
+    $target_dir->mkpath();
 
     foreach my $id ( @{ $data_obj->list_ids() } )
     {
@@ -132,8 +134,8 @@ sub run
             die "Invalid id '$id'.";
         }
 
-        io->catfile( $target_dir, $filename_cb->( $self, { id => $id, }, ) )
-            ->assert->print(
+        $target_dir->child( $filename_cb->( $self, { id => $id, }, ) )
+            ->spew_utf8(
             $contents_cb->(
                 $self, { id => $id, data => $data_obj->lookup_data($id) },
             )
